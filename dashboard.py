@@ -29,7 +29,7 @@ def add_font(font_path):
 clear_font_cache()
 
 # Path to the font file (Sarabun-Regular.ttf)
-font_path = "path/to/your/fonts/Sarabun-Regular.ttf"  # Update this path to your font
+font_path = "fonts\Prompt-Regular.ttf"  # Update this path to your font
 
 # Add the font to matplotlib
 add_font(font_path)
