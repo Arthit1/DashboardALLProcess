@@ -3,6 +3,8 @@ import streamlit as st
 import os
 import requests
 import base64
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
 
 # Function to download font from Google Fonts (Prompt)
 def download_google_font(font_url, font_path):
