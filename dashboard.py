@@ -1,53 +1,28 @@
 import pandas as pd
 import streamlit as st
 import os
-import base64
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-# Function to load and convert the font file into base64
-def load_font_base64(font_path):
-    with open(font_path, "rb") as font_file:
-        font_data = font_file.read()
-    return base64.b64encode(font_data).decode()
+# Apply Google Fonts CSS directly
+font_css = """
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400&display=swap');
+        
+        body {
+            font-family: 'Prompt', sans-serif;
+        }
 
-# Path to the font file (e.g., "Prompt-Regular.ttf")
-font_path = "fonts/Prompt-Regular.ttf"  # Change to your local font path
+        .streamlit-expanderHeader {
+            font-family: 'Prompt', sans-serif;
+        }
+    </style>
+"""
 
-# Ensure the font file exists
-if os.path.exists(font_path):
-    # Convert the font to base64 encoding
-    font_base64 = load_font_base64(font_path)
-
-    # Embed the base64 encoded font into CSS
-    font_css = f"""
-        <style>
-            @font-face {{
-                font-family: 'Prompt';
-                src: url(data:font/ttf;base64,{font_base64}) format('truetype');
-            }}
-            body {{
-                font-family: 'Prompt', sans-serif;
-            }}
-            .streamlit-expanderHeader {{
-                font-family: 'Prompt', sans-serif;
-            }}
-        </style>
-    """
-else:
-    # If the font file is missing, use a fallback font
-    font_css = """
-        <style>
-            body {
-                font-family: 'Arial', sans-serif;
-            }
-        </style>
-    """
-
-# Apply the embedded font to the Streamlit app using the above CSS
+# Apply the CSS for font styling
 st.markdown(font_css, unsafe_allow_html=True)
 
-# Set global font for matplotlib
+# Set global font for matplotlib (for all plots)
 rcParams['font.family'] = 'Prompt'
 
 # Title of the dashboard
