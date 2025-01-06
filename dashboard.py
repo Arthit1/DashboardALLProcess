@@ -1,29 +1,36 @@
 import pandas as pd
 import streamlit as st
 import os
+import base64
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-# Apply Google Fonts CSS directly
+# Function to load and convert the font file into base64 (if needed for local use, but we’ll use Google Fonts here)
+def load_font_base64(font_path):
+    with open(font_path, "rb") as font_file:
+        font_data = font_file.read()
+    return base64.b64encode(font_data).decode()
+
+# Embed the TH Sarabun font via Google Fonts
 font_css = """
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=TH+Sarabun:wght@400&display=swap');
         
         body {
-            font-family: 'Prompt', sans-serif;
+            font-family: 'TH Sarabun', sans-serif;
         }
 
         .streamlit-expanderHeader {
-            font-family: 'Prompt', sans-serif;
+            font-family: 'TH Sarabun', sans-serif;
         }
     </style>
 """
 
-# Apply the CSS for font styling
+# Apply the CSS for font styling to Streamlit
 st.markdown(font_css, unsafe_allow_html=True)
 
-# Set global font for matplotlib (for all plots)
-rcParams['font.family'] = 'Prompt'
+# Set the global font for matplotlib plots
+rcParams['font.family'] = 'TH Sarabun'
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
