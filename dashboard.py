@@ -3,28 +3,30 @@ import streamlit as st
 import os
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
-
-# Add custom CSS to load the Google Font (Prompt) for the entire app
-st.markdown(
-    """
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
-
-        body {
-            font-family: 'Prompt', sans-serif;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# Configure Matplotlib to use the Prompt font
 from matplotlib import font_manager as fm
+import requests
+from io import BytesIO
 
-# Use Prompt font from Google Fonts
-font_url = "https://fonts.googleapis.com/css2?family=Prompt&display=swap"
-font_name = "Prompt"  # Name of the font
-rcParams['font.family'] = font_name
+# Function to download font from Google Fonts (Prompt)
+def download_google_font(font_url, font_path):
+    if not os.path.exists(font_path):
+        response = requests.get(font_url)
+        response.raise_for_status()  # Ensure the request was successful
+        with open(font_path, 'wb') as f:
+            f.write(response.content)
+        st.sidebar.success("Font downloaded successfully!")
+    return font_path
+
+# Path to store the downloaded font
+font_path = "Prompt-Regular.ttf"
+font_url = "https://github.com/google/fonts/raw/main/ofl/prompt/Prompt-Regular.ttf"
+
+# Download the font (if not already downloaded)
+font_path = download_google_font(font_url, font_path)
+
+# Register the downloaded font with Matplotlib
+prompt_font = fm.FontProperties(fname=font_path)
+rcParams['font.family'] = prompt_font.get_name()
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
@@ -93,13 +95,13 @@ if data is not None:
                 colors=plt.cm.tab20.colors[:len(status_counts)]  # Adjust colors based on the number of statuses
             )
 
-            # Customize font for autopct
+            # Customize font for the pie chart
             for text in autotexts:
                 text.set_fontsize(10)  # Set font size for percentage labels
             for text, count in zip(texts, status_counts):
                 text.set_text(f"{text.get_text()} ({count} รายการ) ")  # Add count to the label
 
-            ax.set_title('Pie Chart of Selected สถานะของเอกสาร')
+            ax.set_title('Pie Chart of Selected สถานะของเอกสาร', fontproperties=prompt_font)
             st.pyplot(fig)
 
         else:
