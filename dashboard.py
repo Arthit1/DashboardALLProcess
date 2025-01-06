@@ -12,29 +12,43 @@ def load_font_base64(font_path):
     return base64.b64encode(font_data).decode()
 
 # Path to the font file (e.g., "Prompt-Regular.ttf")
-font_path = "path/to/your/font/Prompt-Regular.ttf"
+font_path = "fonts/Prompt-Regular.ttf"  # Change to your local font path
 
-# Convert the font to base64 encoding
-font_base64 = load_font_base64(font_path)
+# Ensure the font file exists
+if os.path.exists(font_path):
+    # Convert the font to base64 encoding
+    font_base64 = load_font_base64(font_path)
 
-# Embed the base64 encoded font into CSS
-font_css = f"""
-    <style>
-        @font-face {{
-            font-family: 'Prompt';
-            src: url(data:font/ttf;base64,{font_base64}) format('truetype');
-        }}
-        body {{
-            font-family: 'Prompt', sans-serif;
-        }}
-        .streamlit-expanderHeader {{
-            font-family: 'Prompt', sans-serif;
-        }}
-    </style>
-"""
+    # Embed the base64 encoded font into CSS
+    font_css = f"""
+        <style>
+            @font-face {{
+                font-family: 'Prompt';
+                src: url(data:font/ttf;base64,{font_base64}) format('truetype');
+            }}
+            body {{
+                font-family: 'Prompt', sans-serif;
+            }}
+            .streamlit-expanderHeader {{
+                font-family: 'Prompt', sans-serif;
+            }}
+        </style>
+    """
+else:
+    # If the font file is missing, use a fallback font
+    font_css = """
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+            }
+        </style>
+    """
 
 # Apply the embedded font to the Streamlit app using the above CSS
 st.markdown(font_css, unsafe_allow_html=True)
+
+# Set global font for matplotlib
+rcParams['font.family'] = 'Prompt'
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
