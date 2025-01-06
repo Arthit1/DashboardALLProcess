@@ -4,20 +4,27 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-# Set custom CSS to use Tahoma font for the entire app
+# Add custom CSS to load the Google Font (Prompt) for the entire app
 st.markdown(
     """
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
+
         body {
-            font-family: 'Tahoma', sans-serif;
+            font-family: 'Prompt', sans-serif;
         }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Set Tahoma as the default font for Matplotlib
-rcParams['font.family'] = 'Tahoma'
+# Configure Matplotlib to use the Prompt font
+from matplotlib import font_manager as fm
+
+# Use Prompt font from Google Fonts
+font_url = "https://fonts.googleapis.com/css2?family=Prompt&display=swap"
+font_name = "Prompt"  # Name of the font
+rcParams['font.family'] = font_name
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
