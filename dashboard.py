@@ -5,10 +5,20 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from matplotlib import font_manager
 
-# Function to clear matplotlib font cache
+# Remove matplotlib font cache
 def clear_font_cache():
+    import shutil
     import matplotlib
-    matplotlib.font_manager._rebuild()
+
+    cache_dir = matplotlib.get_cachedir()
+    font_cache_dir = os.path.join(cache_dir, 'fontlist-v310.json')  # Change version if needed
+
+    if os.path.exists(font_cache_dir):
+        try:
+            os.remove(font_cache_dir)
+            print("Font cache cleared successfully.")
+        except Exception as e:
+            print(f"Error clearing font cache: {e}")
 
 # Function to add font
 def add_font(font_path):
