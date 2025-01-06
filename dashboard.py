@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import os
 import requests
+import base64
 
 # Function to download font from Google Fonts (Prompt)
 def download_google_font(font_url, font_path):
@@ -20,14 +21,17 @@ font_url = "https://github.com/google/fonts/raw/main/ofl/prompt/Prompt-Regular.t
 # Download the font (if not already downloaded)
 font_path = download_google_font(font_url, font_path)
 
+# Encode the font file into base64
+with open(font_path, "rb") as font_file:
+    font_base64 = base64.b64encode(font_file.read()).decode('utf-8')
+
 # Apply the font to Streamlit's CSS
 st.markdown(
     f"""
     <style>
         @font-face {{
             font-family: 'Prompt';
-            src: url('data:font/ttf;base64,{open(font_path, 'rb').read().encode('base64')}')
-            format('truetype');
+            src: url('data:font/ttf;base64,{font_base64}') format('truetype');
         }}
         body {{
             font-family: 'Prompt', sans-serif;
