@@ -3,19 +3,26 @@ import streamlit as st
 import os
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
+from matplotlib import font_manager
 
-# Embed the font link via Google Fonts in Streamlit
-font_link = """
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
-"""
+# Function to clear matplotlib font cache
+def clear_font_cache():
+    import matplotlib
+    matplotlib.font_manager._rebuild()
 
-# Apply the font link in the app
-st.markdown(font_link, unsafe_allow_html=True)
+# Function to add font
+def add_font(font_path):
+    font_manager.fontManager.addfont(font_path)
+    rcParams['font.family'] = 'Sarabun'  # Make sure Sarabun is set as default
 
-# Set the global font for matplotlib plots
-rcParams['font.family'] = 'Sarabun'  # You can switch between 'Prompt' or 'Sarabun' here
+# Clear font cache
+clear_font_cache()
+
+# Path to the font file (Sarabun-Regular.ttf)
+font_path = "path/to/your/fonts/Sarabun-Regular.ttf"  # Update this path to your font
+
+# Add the font to matplotlib
+add_font(font_path)
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
