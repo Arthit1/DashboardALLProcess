@@ -2,45 +2,20 @@ import pandas as pd
 import streamlit as st
 import os
 import requests
-import base64
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-# Function to download font from Google Fonts (Prompt)
-def download_google_font(font_url, font_path):
-    if not os.path.exists(font_path):
-        response = requests.get(font_url)
-        response.raise_for_status()  # Ensure the request was successful
-        with open(font_path, 'wb') as f:
-            f.write(response.content)
-        st.sidebar.success("Font downloaded successfully!")
-    return font_path
-
-# Path to store the downloaded font
-font_path = "Prompt-Regular.ttf"
-font_url = "https://github.com/google/fonts/raw/main/ofl/prompt/Prompt-Regular.ttf"
-
-# Download the font (if not already downloaded)
-font_path = download_google_font(font_url, font_path)
-
-# Encode the font file into base64
-with open(font_path, "rb") as font_file:
-    font_base64 = base64.b64encode(font_file.read()).decode('utf-8')
-
-# Apply the font to Streamlit's CSS
+# Apply the font to Streamlit's CSS using Google Fonts link
 st.markdown(
-    f"""
+    """
     <style>
-        @font-face {{
-            font-family: 'Prompt';
-            src: url('data:font/ttf;base64,{font_base64}') format('truetype');
-        }}
-        body {{
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400&display=swap');
+        body {
             font-family: 'Prompt', sans-serif;
-        }}
-        .streamlit-expanderHeader {{
+        }
+        .streamlit-expanderHeader {
             font-family: 'Prompt', sans-serif;
-        }}
+        }
     </style>
     """,
     unsafe_allow_html=True
