@@ -1,11 +1,7 @@
 import pandas as pd
 import streamlit as st
 import os
-import matplotlib.pyplot as plt
-from matplotlib import rcParams
-from matplotlib import font_manager as fm
 import requests
-from io import BytesIO
 
 # Function to download font from Google Fonts (Prompt)
 def download_google_font(font_url, font_path):
@@ -24,9 +20,25 @@ font_url = "https://github.com/google/fonts/raw/main/ofl/prompt/Prompt-Regular.t
 # Download the font (if not already downloaded)
 font_path = download_google_font(font_url, font_path)
 
-# Register the downloaded font with Matplotlib
-prompt_font = fm.FontProperties(fname=font_path)
-rcParams['font.family'] = prompt_font.get_name()
+# Apply the font to Streamlit's CSS
+st.markdown(
+    f"""
+    <style>
+        @font-face {{
+            font-family: 'Prompt';
+            src: url('data:font/ttf;base64,{open(font_path, 'rb').read().encode('base64')}')
+            format('truetype');
+        }}
+        body {{
+            font-family: 'Prompt', sans-serif;
+        }}
+        .streamlit-expanderHeader {{
+            font-family: 'Prompt', sans-serif;
+        }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
@@ -101,7 +113,7 @@ if data is not None:
             for text, count in zip(texts, status_counts):
                 text.set_text(f"{text.get_text()} ({count} รายการ) ")  # Add count to the label
 
-            ax.set_title('Pie Chart of Selected สถานะของเอกสาร', fontproperties=prompt_font)
+            ax.set_title('Pie Chart of Selected สถานะของเอกสาร', fontsize=14)
             st.pyplot(fig)
 
         else:
