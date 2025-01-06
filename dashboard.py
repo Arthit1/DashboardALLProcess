@@ -1,25 +1,40 @@
 import pandas as pd
 import streamlit as st
 import os
-import requests
+import base64
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-# Apply the font to Streamlit's CSS using Google Fonts link
-st.markdown(
-    """
+# Function to load and convert the font file into base64
+def load_font_base64(font_path):
+    with open(font_path, "rb") as font_file:
+        font_data = font_file.read()
+    return base64.b64encode(font_data).decode()
+
+# Path to the font file (e.g., "Prompt-Regular.ttf")
+font_path = "path/to/your/font/Prompt-Regular.ttf"
+
+# Convert the font to base64 encoding
+font_base64 = load_font_base64(font_path)
+
+# Embed the base64 encoded font into CSS
+font_css = f"""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400&display=swap');
-        body {
+        @font-face {{
+            font-family: 'Prompt';
+            src: url(data:font/ttf;base64,{font_base64}) format('truetype');
+        }}
+        body {{
             font-family: 'Prompt', sans-serif;
-        }
-        .streamlit-expanderHeader {
+        }}
+        .streamlit-expanderHeader {{
             font-family: 'Prompt', sans-serif;
-        }
+        }}
     </style>
-    """,
-    unsafe_allow_html=True
-)
+"""
+
+# Apply the embedded font to the Streamlit app using the above CSS
+st.markdown(font_css, unsafe_allow_html=True)
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
