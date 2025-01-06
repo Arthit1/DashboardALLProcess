@@ -4,24 +4,20 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-# Function to ensure UTF-8 encoding for DataFrame
-def ensure_utf8_encoding(df):
-    return df.apply(lambda x: x.str.encode('utf-8').str.decode('utf-8') if x.dtype == 'object' else x)
-
-# Set custom CSS to use a Thai-compatible font
+# Set custom CSS to use Tahoma font for the entire app
 st.markdown(
     """
     <style>
         body {
-            font-family: 'TH SarabunPSK', sans-serif;
+            font-family: 'Tahoma', sans-serif;
         }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Set Thai-compatible font for matplotlib
-rcParams['font.family'] = 'TH SarabunPSK'
+# Set Tahoma as the default font for Matplotlib
+rcParams['font.family'] = 'Tahoma'
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
@@ -36,13 +32,14 @@ data_mode = st.sidebar.radio(
 # Load data based on user input
 data = None
 if data_mode == "Upload File":
+    # File uploader
     uploaded_file = st.sidebar.file_uploader(
         "Upload your Excel file", type=["xlsx", "xls"]
     )
     if uploaded_file:
         data = pd.read_excel(uploaded_file, sheet_name="Tara-Silom")  # Load only the "Tara-Silom" sheet
-        data = ensure_utf8_encoding(data)  # Ensure encoding
 elif data_mode == "Specify Path":
+    # Text input for file path
     file_path = st.sidebar.text_input(
         "Enter the path to your Excel file",
         value=r"D:\Code\ALLProcess\filtered_data.xlsx"  # Example default path
@@ -51,7 +48,6 @@ elif data_mode == "Specify Path":
         if os.path.exists(file_path):
             try:
                 data = pd.read_excel(file_path, sheet_name="Tara-Silom")  # Load only the "Tara-Silom" sheet
-                data = ensure_utf8_encoding(data)  # Ensure encoding
                 st.sidebar.success("Data loaded successfully!")
             except Exception as e:
                 st.sidebar.error(f"Error loading file: {e}")
