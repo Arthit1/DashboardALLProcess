@@ -2,7 +2,26 @@ import pandas as pd
 import streamlit as st
 import os
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
+from io import BytesIO
+import requests
+from matplotlib import font_manager as fm
+
+# Function to download font from Google Fonts and register it with Matplotlib
+def register_google_font(font_name):
+    url = f"https://fonts.googleapis.com/css2?family={font_name.replace(' ', '+')}:wght@400;500;600;700&display=swap"
+    response = requests.get(url)
+    if response.status_code == 200:
+        ttf_url = response.text.split("url(")[1].split(")")[0].replace('"', '')
+        font_data = requests.get(ttf_url).content
+        font_file = BytesIO(font_data)
+        font_path = fm.FontProperties(fname=font_file).get_name()
+        fm.fontManager.addfont(font_path)
+        plt.rcParams["font.family"] = font_path
+    else:
+        st.error(f"Failed to download font '{font_name}' from Google Fonts.")
+
+# Register the Sarabun font dynamically
+register_google_font("Sarabun")
 
 # Apply Google Fonts for Streamlit UI
 st.markdown("""
@@ -16,10 +35,6 @@ st.markdown("""
         }
     </style>
     """, unsafe_allow_html=True)
-
-# Configure Matplotlib to use a web-friendly font
-rcParams['font.family'] = 'sans-serif'
-rcParams['font.sans-serif'] = ['Sarabun', 'Arial', 'DejaVu Sans']  # Fallback fonts
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
