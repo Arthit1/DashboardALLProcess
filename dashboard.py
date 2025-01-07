@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import requests
 from tempfile import NamedTemporaryFile
-from matplotlib import font_manager as fm
+from matplotlib import font_manager as fm, rcParams
 
 # Function to download font from Google Fonts and register it with Matplotlib
 def register_google_font(font_name):
@@ -24,8 +24,11 @@ def register_google_font(font_name):
             tmp_font_path = tmp_file.name
 
         # Register the font with Matplotlib
-        font_path = fm.FontProperties(fname=tmp_font_path).get_name()
-        plt.rcParams["font.family"] = font_path
+        font_prop = fm.FontProperties(fname=tmp_font_path)
+        rcParams['font.family'] = font_prop.get_name()
+
+        # Rebuild the font cache
+        fm._load_fontmanager()
     else:
         st.error(f"Failed to download font '{font_name}' from Google Fonts.")
 
@@ -44,6 +47,11 @@ st.markdown("""
         }
     </style>
     """, unsafe_allow_html=True)
+
+# Verify the available fonts (for debugging)
+available_fonts = sorted([f.name for f in fm.fontManager.ttflist])
+if "Sarabun" not in available_fonts:
+    st.warning("Sarabun font not detected in Matplotlib. Falling back to default font.")
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
