@@ -3,36 +3,23 @@ import streamlit as st
 import os
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
-from matplotlib import font_manager
 
-# Remove matplotlib font cache
-def clear_font_cache():
-    import shutil
-    import matplotlib
+# Apply Google Fonts for Streamlit UI
+st.markdown("""
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+        .streamlit-expanderHeader {
+            font-family: 'Sarabun', sans-serif;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
-    cache_dir = matplotlib.get_cachedir()
-    font_cache_dir = os.path.join(cache_dir, 'fontlist-v310.json')  # Change version if needed
-
-    if os.path.exists(font_cache_dir):
-        try:
-            os.remove(font_cache_dir)
-            print("Font cache cleared successfully.")
-        except Exception as e:
-            print(f"Error clearing font cache: {e}")
-
-# Function to add font
-def add_font(font_path):
-    font_manager.fontManager.addfont(font_path)
-    rcParams['font.family'] = 'Sarabun'  # Make sure Sarabun is set as default
-
-# Clear font cache
-clear_font_cache()
-
-# Path to the font file (Sarabun-Regular.ttf)
-font_path = "fonts\Prompt-Regular.ttf"  # Update this path to your font
-
-# Add the font to matplotlib
-add_font(font_path)
+# Configure Matplotlib to use a web-friendly font
+rcParams['font.family'] = 'sans-serif'
+rcParams['font.sans-serif'] = ['Sarabun', 'Arial', 'DejaVu Sans']  # Fallback fonts
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
@@ -105,7 +92,7 @@ if data is not None:
             for text in autotexts:
                 text.set_fontsize(10)  # Set font size for percentage labels
             for text, count in zip(texts, status_counts):
-                text.set_text(f"{text.get_text()} ({count} รายการ) ")  # Add count to the label
+                text.set_text(f"{text.get_text()} ({count} รายการ)")  # Add count to the label
 
             ax.set_title('Pie Chart of Selected สถานะของเอกสาร', fontsize=14)
             st.pyplot(fig)
