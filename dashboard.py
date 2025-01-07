@@ -1,41 +1,44 @@
+import os
 import pandas as pd
 import streamlit as st
-import os
 import matplotlib.pyplot as plt
 from io import BytesIO
 import requests
-from tempfile import NamedTemporaryFile
 from matplotlib import font_manager as fm, rcParams
 
-# Function to download font from Google Fonts and register it with Matplotlib
-def register_google_font(font_name):
-    url = f"https://fonts.googleapis.com/css2?family={font_name.replace(' ', '+')}:wght@400;500;600;700&display=swap"
-    response = requests.get(url)
-    if response.status_code == 200:
-        # Extract the TTF file URL from the Google Fonts CSS
-        ttf_url = response.text.split("url(")[1].split(")")[0].replace('"', '')
-        
-        # Download the TTF file
-        font_data = requests.get(ttf_url).content
-        
-        # Save the font to a temporary file
-        with NamedTemporaryFile(delete=False, suffix=".ttf") as tmp_file:
-            tmp_file.write(font_data)
-            tmp_font_path = tmp_file.name
+# Function to download and register a font with Matplotlib
+def register_google_font(font_name, save_dir="fonts"):
+    os.makedirs(save_dir, exist_ok=True)
+    font_file_path = os.path.join(save_dir, f"{font_name}.ttf")
+    
+    if not os.path.exists(font_file_path):
+        # Fetch font from Google Fonts
+        url = f"https://fonts.googleapis.com/css2?family={font_name.replace(' ', '+')}:wght@400;500;600;700&display=swap"
+        response = requests.get(url)
+        if response.status_code == 200:
+            # Extract TTF URL and download font file
+            ttf_url = response.text.split("url(")[1].split(")")[0].replace('"', '')
+            font_data = requests.get(ttf_url).content
+            with open(font_file_path, "wb") as f:
+                f.write(font_data)
+        else:
+            st.error(f"Failed to download font '{font_name}' from Google Fonts.")
+            return None
 
-        # Register the font with Matplotlib
-        font_prop = fm.FontProperties(fname=tmp_font_path)
-        rcParams['font.family'] = font_prop.get_name()
+    # Register the font with Matplotlib
+    font_prop = fm.FontProperties(fname=font_file_path)
+    rcParams['font.family'] = font_prop.get_name()
+    return font_prop.get_name()
 
-        # Rebuild the font cache
-        fm._load_fontmanager()
-    else:
-        st.error(f"Failed to download font '{font_name}' from Google Fonts.")
+# Register Sarabun font
+sarabun_font = register_google_font("Sarabun")
 
-# Register the Sarabun font dynamically
-register_google_font("Sarabun")
+if sarabun_font:
+    st.success(f"Sarabun font successfully registered as '{sarabun_font}'.")
+else:
+    st.warning("Sarabun font not detected. Falling back to default font.")
 
-# Apply Google Fonts for Streamlit UI
+# Apply Google Fonts to Streamlit UI
 st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
@@ -47,11 +50,6 @@ st.markdown("""
         }
     </style>
     """, unsafe_allow_html=True)
-
-# Verify the available fonts (for debugging)
-available_fonts = sorted([f.name for f in fm.fontManager.ttflist])
-if "Sarabun" not in available_fonts:
-    st.warning("Sarabun font not detected in Matplotlib. Falling back to default font.")
 
 # Title of the dashboard
 st.title("Tara-Silom Data Dashboard")
@@ -121,10 +119,14 @@ if data is not None:
             )
 
             # Customize font for the pie chart
-            for text in autotexts:
-                text.set_fontsize(10)  # Set font size for percentage labels
-            for text, count in zip(texts, status_counts):
-                text.set_text(f"{text.get_text()} ({count} รายการ)")  # Add count to the label
+            if sarabun_font:
+                font_path = os.path.join("fonts", "Sarabun.ttf")
+                prop = fm.FontProperties(fname=font_path)
+                for text in autotexts:
+                    text.set_fontproperties(prop)  # Set font for percentage labels
+                for text, count in zip(texts, status_counts):
+                    text.set_text(f"{text.get_text()} ({count} รายการ) ")  # Add count to the label
+                    text.set_fontproperties(prop)
 
             ax.set_title('Pie Chart of Selected สถานะของเอกสาร', fontsize=14)
             st.pyplot(fig)
