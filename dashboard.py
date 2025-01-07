@@ -33,11 +33,6 @@ def register_google_font(font_name, save_dir="fonts"):
 # Register Sarabun font
 sarabun_font = register_google_font("Sarabun")
 
-if sarabun_font:
-    st.success(f"Sarabun font successfully registered as '{sarabun_font}'.")
-else:
-    st.warning("Sarabun font not detected. Falling back to default font.")
-
 # Apply Google Fonts to Streamlit UI
 st.markdown("""
     <style>
@@ -128,7 +123,7 @@ if data is not None:
                     text.set_text(f"{text.get_text()} ({count} รายการ) ")  # Add count to the label
                     text.set_fontproperties(prop)
 
-            ax.set_title('Pie Chart of Selected สถานะของเอกสาร', fontsize=14)
+            
             st.pyplot(fig)
 
         else:
