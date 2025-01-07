@@ -4,6 +4,7 @@ import os
 import matplotlib.pyplot as plt
 from io import BytesIO
 import requests
+from tempfile import NamedTemporaryFile
 from matplotlib import font_manager as fm
 
 # Function to download font from Google Fonts and register it with Matplotlib
@@ -11,11 +12,19 @@ def register_google_font(font_name):
     url = f"https://fonts.googleapis.com/css2?family={font_name.replace(' ', '+')}:wght@400;500;600;700&display=swap"
     response = requests.get(url)
     if response.status_code == 200:
+        # Extract the TTF file URL from the Google Fonts CSS
         ttf_url = response.text.split("url(")[1].split(")")[0].replace('"', '')
+        
+        # Download the TTF file
         font_data = requests.get(ttf_url).content
-        font_file = BytesIO(font_data)
-        font_path = fm.FontProperties(fname=font_file).get_name()
-        fm.fontManager.addfont(font_path)
+        
+        # Save the font to a temporary file
+        with NamedTemporaryFile(delete=False, suffix=".ttf") as tmp_file:
+            tmp_file.write(font_data)
+            tmp_font_path = tmp_file.name
+
+        # Register the font with Matplotlib
+        font_path = fm.FontProperties(fname=tmp_font_path).get_name()
         plt.rcParams["font.family"] = font_path
     else:
         st.error(f"Failed to download font '{font_name}' from Google Fonts.")
